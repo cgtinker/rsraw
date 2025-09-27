@@ -12,7 +12,8 @@ homepage = "https://github.com/hexilee/rsraw"
 documentation = "https://docs.rs/rsraw-sys"
 keywords = ["raw", "image", "processing", "libraw", "ffi", "bindings", "camera"]
 categories = ["multimedia::images", "external-ffi-bindings"]
-readme = "README.md"
+readme = "../README.md"
+rust-version = "1.70"
 
 [dependencies]
 libc = "0.2"

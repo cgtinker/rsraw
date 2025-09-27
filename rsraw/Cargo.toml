@@ -10,8 +10,7 @@ homepage = "https://github.com/hexilee/rsraw"
 documentation = "https://docs.rs/rsraw"
 keywords = ["raw", "image", "processing", "libraw", "camera", "photography", "demosaic", "exif"]
 categories = ["multimedia::images", "filesystem", "parsing"]
-readme = "README.md"
-rust-version = "1.70"
+readme = "../README.md"
 
 [dependencies]
 rsraw-sys = { path = "../rsraw-sys" }
