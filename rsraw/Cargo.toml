@@ -12,6 +12,9 @@ keywords = ["raw", "image", "processing", "libraw", "exif"]
 categories = ["multimedia::images", "filesystem", "parsing"]
 readme = "../README.md"
 
+[exclude]
+"tests/assets/"
+
 [dependencies]
 rsraw-sys = { path = "../rsraw-sys", version = "0.1" }
 chrono = { version = "0.4", features = ["clock", "serde"] }
