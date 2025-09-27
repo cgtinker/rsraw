@@ -2,6 +2,16 @@
 name = "rsraw"
 version = "0.1.0"
 edition = "2021"
+authors = ["hexilee <hexilee@outlook.com>"]
+description = "A comprehensive Rust wrapper for the LibRaw library, providing safe and idiomatic access to raw image processing capabilities, works on Linux/Windows/MacOS/iOS/Android."
+license = "MIT"
+repository = "https://github.com/hexilee/rsraw"
+homepage = "https://github.com/hexilee/rsraw"
+documentation = "https://docs.rs/rsraw"
+keywords = ["raw", "image", "processing", "libraw", "camera", "photography", "demosaic", "exif"]
+categories = ["multimedia::images", "filesystem", "parsing"]
+readme = "README.md"
+rust-version = "1.70"
 
 [dependencies]
 rsraw-sys = { path = "../rsraw-sys" }

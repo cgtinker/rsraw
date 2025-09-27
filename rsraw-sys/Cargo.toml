@@ -4,6 +4,15 @@ version = "0.1.0"
 build = "build.rs"
 include = ["src/lib.rs", "src/bindings.rs", "LICENSE-*", "README.md", "LibRaw/libraw/*", "LibRaw/src/*", "LibRaw/internal/*", "LibRaw/COPYRIGHT", "LibRaw/LICENSE.*", "build.rs"]
 edition = "2021"
+authors = ["hexilee <hexilee@outlook.com>"]
+description = "Low-level FFI bindings for the LibRaw C++ library"
+license = "MIT"
+repository = "https://github.com/hexilee/rsraw"
+homepage = "https://github.com/hexilee/rsraw"
+documentation = "https://docs.rs/rsraw-sys"
+keywords = ["raw", "image", "processing", "libraw", "ffi", "bindings", "camera"]
+categories = ["multimedia::images", "external-ffi-bindings"]
+readme = "README.md"
 
 [dependencies]
 libc = "0.2"
