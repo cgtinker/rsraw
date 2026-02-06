@@ -157,7 +157,7 @@ impl RawImage {
         (&self.as_ref().lens).into()
     }
 
-    pub fn raw_image(&self) -> &[u16] {
+    pub fn raw_image<'img_buffer>(&self) -> &[u16] {
         unsafe {
             let ptr = self.as_ref().rawdata.raw_image;
             let w = self.as_ref().sizes.raw_width as usize;
@@ -168,10 +168,13 @@ impl RawImage {
         }
     }
 
+    pub fn filters(&self) -> u32 {
+        self.as_ref().rawdata.iparams.filters
+    }
+
     pub fn channel_description(&self) -> Cow<'_, str> {
         unsafe {
-            std::ffi::CStr::from_ptr(&self.as_ref().idata.cdesc as *const _)
-                .to_string_lossy()
+            std::ffi::CStr::from_ptr(&self.as_ref().idata.cdesc as *const _).to_string_lossy()
         }
     }
 
