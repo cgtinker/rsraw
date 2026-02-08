@@ -5,6 +5,7 @@ mod mounts;
 mod processed;
 mod raw;
 mod thumb;
+pub mod fimb;
 
 pub use gps::GpsInfo;
 pub use lens::{FocusType, LensInfo};
