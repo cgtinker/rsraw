@@ -105,6 +105,12 @@ impl RawImage {
         }
     }
 
+    pub fn params_mut(&mut self) -> OutputParamsMut<'_> {
+        OutputParamsMut {
+            data: &mut self.as_mut_ref().params,
+        }
+    }
+
     pub fn rawparams(&mut self) -> RawUnpackParams<'_> {
         RawUnpackParams {
             data: &mut self.as_mut_ref().rawparams,
@@ -241,7 +247,10 @@ impl<'a> ImageParams<'a> {
             None
         } else {
             Some(unsafe {
-                std::slice::from_raw_parts(self.data.xmpdata as *const u8, self.data.xmplen as usize)
+                std::slice::from_raw_parts(
+                    self.data.xmpdata as *const u8,
+                    self.data.xmplen as usize,
+                )
             })
         }
     }
@@ -634,59 +643,45 @@ impl<'a> OutputParams<'a> {
     pub fn greybox(&self) -> &[u32; 4] {
         &self.data.greybox
     }
-
     pub fn cropbox(&self) -> &[u32; 4] {
         &self.data.cropbox
     }
-
     pub fn aber(&self) -> &[f64; 4] {
         &self.data.aber
     }
-
     pub fn gamm(&self) -> &[f64; 6] {
         &self.data.gamm
     }
-
     pub fn user_mul(&self) -> &[f32; 4] {
         &self.data.user_mul
     }
-
     pub fn bright(&self) -> f32 {
         self.data.bright
     }
-
     pub fn threshold(&self) -> f32 {
         self.data.threshold
     }
-
     pub fn half_size(&self) -> bool {
         self.data.half_size != 0
     }
-
     pub fn four_color_rgb(&self) -> bool {
         self.data.four_color_rgb != 0
     }
-
     pub fn highlight(&self) -> i32 {
         self.data.highlight
     }
-
     pub fn use_auto_wb(&self) -> bool {
         self.data.use_auto_wb != 0
     }
-
     pub fn use_camera_wb(&self) -> bool {
         self.data.use_camera_wb != 0
     }
-
     pub fn use_camera_matrix(&self) -> i32 {
         self.data.use_camera_matrix
     }
-
     pub fn output_color(&self) -> i32 {
         self.data.output_color
     }
-
     pub fn output_profile(&self) -> Option<Cow<'_, str>> {
         if self.data.output_profile.is_null() {
             None
@@ -694,7 +689,6 @@ impl<'a> OutputParams<'a> {
             Some(unsafe { CStr::from_ptr(self.data.output_profile).to_string_lossy() })
         }
     }
-
     pub fn camera_profile(&self) -> Option<Cow<'_, str>> {
         if self.data.camera_profile.is_null() {
             None
@@ -702,7 +696,6 @@ impl<'a> OutputParams<'a> {
             Some(unsafe { CStr::from_ptr(self.data.camera_profile).to_string_lossy() })
         }
     }
-
     pub fn bad_pixels(&self) -> Option<Cow<'_, str>> {
         if self.data.bad_pixels.is_null() {
             None
@@ -710,7 +703,6 @@ impl<'a> OutputParams<'a> {
             Some(unsafe { CStr::from_ptr(self.data.bad_pixels).to_string_lossy() })
         }
     }
-
     pub fn dark_frame(&self) -> Option<Cow<'_, str>> {
         if self.data.dark_frame.is_null() {
             None
@@ -718,93 +710,334 @@ impl<'a> OutputParams<'a> {
             Some(unsafe { CStr::from_ptr(self.data.dark_frame).to_string_lossy() })
         }
     }
-
     pub fn output_bps(&self) -> i32 {
         self.data.output_bps
     }
-
     pub fn output_tiff(&self) -> bool {
         self.data.output_tiff != 0
     }
-
     pub fn output_flags(&self) -> i32 {
         self.data.output_flags
     }
-
     pub fn user_flip(&self) -> i32 {
         self.data.user_flip
     }
-
     pub fn user_qual(&self) -> i32 {
         self.data.user_qual
     }
-
     pub fn user_black(&self) -> i32 {
         self.data.user_black
     }
-
     pub fn user_cblack(&self) -> &[i32; 4] {
         &self.data.user_cblack
     }
-
     pub fn user_sat(&self) -> i32 {
         self.data.user_sat
     }
-
     pub fn med_passes(&self) -> i32 {
         self.data.med_passes
     }
-
     pub fn auto_bright_thr(&self) -> f32 {
         self.data.auto_bright_thr
     }
-
     pub fn adjust_maximum_thr(&self) -> f32 {
         self.data.adjust_maximum_thr
     }
-
     pub fn no_auto_bright(&self) -> bool {
         self.data.no_auto_bright != 0
     }
-
     pub fn use_fuji_rotate(&self) -> bool {
         self.data.use_fuji_rotate != 0
     }
-
     pub fn green_matching(&self) -> bool {
         self.data.green_matching != 0
     }
-
     pub fn dcb_iterations(&self) -> i32 {
         self.data.dcb_iterations
     }
-
     pub fn dcb_enhance_fl(&self) -> bool {
         self.data.dcb_enhance_fl != 0
     }
-
     pub fn fbdd_noiserd(&self) -> i32 {
         self.data.fbdd_noiserd
     }
-
     pub fn exp_correc(&self) -> bool {
         self.data.exp_correc != 0
     }
-
     pub fn exp_shift(&self) -> f32 {
         self.data.exp_shift
     }
-
     pub fn exp_preser(&self) -> f32 {
         self.data.exp_preser
     }
-
     pub fn no_auto_scale(&self) -> bool {
         self.data.no_auto_scale != 0
     }
-
     pub fn no_interpolation(&self) -> bool {
         self.data.no_interpolation != 0
+    }
+}
+
+pub struct OutputParamsMut<'a> {
+    data: &'a mut sys::libraw_output_params_t,
+}
+
+impl<'a> OutputParamsMut<'a> {
+    pub fn greybox(&self) -> &[u32; 4] {
+        &self.data.greybox
+    }
+    pub fn set_greybox(&mut self, v: [u32; 4]) {
+        self.data.greybox = v;
+    }
+    pub fn cropbox(&self) -> &[u32; 4] {
+        &self.data.cropbox
+    }
+    pub fn set_cropbox(&mut self, v: [u32; 4]) {
+        self.data.cropbox = v;
+    }
+    pub fn aber(&self) -> &[f64; 4] {
+        &self.data.aber
+    }
+    pub fn set_aber(&mut self, v: [f64; 4]) {
+        self.data.aber = v;
+    }
+    pub fn gamm(&self) -> &[f64; 6] {
+        &self.data.gamm
+    }
+    pub fn set_gamm(&mut self, v: [f64; 6]) {
+        self.data.gamm = v;
+    }
+    pub fn user_mul(&self) -> &[f32; 4] {
+        &self.data.user_mul
+    }
+    pub fn set_user_mul(&mut self, v: [f32; 4]) {
+        self.data.user_mul = v;
+    }
+    pub fn bright(&self) -> f32 {
+        self.data.bright
+    }
+    pub fn set_bright(&mut self, v: f32) {
+        self.data.bright = v;
+    }
+    pub fn threshold(&self) -> f32 {
+        self.data.threshold
+    }
+    pub fn set_threshold(&mut self, v: f32) {
+        self.data.threshold = v;
+    }
+    pub fn half_size(&self) -> bool {
+        self.data.half_size != 0
+    }
+    pub fn set_half_size(&mut self, v: bool) {
+        self.data.half_size = v as i32;
+    }
+    pub fn four_color_rgb(&self) -> bool {
+        self.data.four_color_rgb != 0
+    }
+    pub fn set_four_color_rgb(&mut self, v: bool) {
+        self.data.four_color_rgb = v as i32;
+    }
+    pub fn highlight(&self) -> i32 {
+        self.data.highlight
+    }
+    pub fn set_highlight(&mut self, v: i32) {
+        self.data.highlight = v;
+    }
+    pub fn use_auto_wb(&self) -> bool {
+        self.data.use_auto_wb != 0
+    }
+    pub fn set_use_auto_wb(&mut self, v: bool) {
+        self.data.use_auto_wb = v as i32;
+    }
+    pub fn use_camera_wb(&self) -> bool {
+        self.data.use_camera_wb != 0
+    }
+    pub fn set_use_camera_wb(&mut self, v: bool) {
+        self.data.use_camera_wb = v as i32;
+    }
+    pub fn use_camera_matrix(&self) -> i32 {
+        self.data.use_camera_matrix
+    }
+    pub fn set_use_camera_matrix(&mut self, v: i32) {
+        self.data.use_camera_matrix = v;
+    }
+    pub fn output_color(&self) -> i32 {
+        self.data.output_color
+    }
+    pub fn set_output_color(&mut self, v: i32) {
+        self.data.output_color = v;
+    }
+    pub fn output_profile(&self) -> Option<Cow<'_, str>> {
+        if self.data.output_profile.is_null() {
+            None
+        } else {
+            Some(unsafe { CStr::from_ptr(self.data.output_profile).to_string_lossy() })
+        }
+    }
+    pub fn set_output_profile(&mut self, v: Option<&std::ffi::CStr>) {
+        self.data.output_profile = v.map_or(std::ptr::null_mut(), |s| s.as_ptr() as *mut _);
+    }
+    pub fn camera_profile(&self) -> Option<Cow<'_, str>> {
+        if self.data.camera_profile.is_null() {
+            None
+        } else {
+            Some(unsafe { CStr::from_ptr(self.data.camera_profile).to_string_lossy() })
+        }
+    }
+    pub fn set_camera_profile(&mut self, v: Option<&std::ffi::CStr>) {
+        self.data.camera_profile = v.map_or(std::ptr::null_mut(), |s| s.as_ptr() as *mut _);
+    }
+    pub fn bad_pixels(&self) -> Option<Cow<'_, str>> {
+        if self.data.bad_pixels.is_null() {
+            None
+        } else {
+            Some(unsafe { CStr::from_ptr(self.data.bad_pixels).to_string_lossy() })
+        }
+    }
+    pub fn set_bad_pixels(&mut self, v: Option<&std::ffi::CStr>) {
+        self.data.bad_pixels = v.map_or(std::ptr::null_mut(), |s| s.as_ptr() as *mut _);
+    }
+    pub fn dark_frame(&self) -> Option<Cow<'_, str>> {
+        if self.data.dark_frame.is_null() {
+            None
+        } else {
+            Some(unsafe { CStr::from_ptr(self.data.dark_frame).to_string_lossy() })
+        }
+    }
+    pub fn set_dark_frame(&mut self, v: Option<&std::ffi::CStr>) {
+        self.data.dark_frame = v.map_or(std::ptr::null_mut(), |s| s.as_ptr() as *mut _);
+    }
+    pub fn output_bps(&self) -> i32 {
+        self.data.output_bps
+    }
+    pub fn set_output_bps(&mut self, v: i32) {
+        self.data.output_bps = v;
+    }
+    pub fn output_tiff(&self) -> bool {
+        self.data.output_tiff != 0
+    }
+    pub fn set_output_tiff(&mut self, v: bool) {
+        self.data.output_tiff = v as i32;
+    }
+    pub fn output_flags(&self) -> i32 {
+        self.data.output_flags
+    }
+    pub fn set_output_flags(&mut self, v: i32) {
+        self.data.output_flags = v;
+    }
+    pub fn user_flip(&self) -> i32 {
+        self.data.user_flip
+    }
+    pub fn set_user_flip(&mut self, v: i32) {
+        self.data.user_flip = v;
+    }
+    pub fn user_qual(&self) -> i32 {
+        self.data.user_qual
+    }
+    pub fn set_user_qual(&mut self, v: i32) {
+        self.data.user_qual = v;
+    }
+    pub fn user_black(&self) -> i32 {
+        self.data.user_black
+    }
+    pub fn set_user_black(&mut self, v: i32) {
+        self.data.user_black = v;
+    }
+    pub fn user_cblack(&self) -> &[i32; 4] {
+        &self.data.user_cblack
+    }
+    pub fn set_user_cblack(&mut self, v: [i32; 4]) {
+        self.data.user_cblack = v;
+    }
+    pub fn user_sat(&self) -> i32 {
+        self.data.user_sat
+    }
+    pub fn set_user_sat(&mut self, v: i32) {
+        self.data.user_sat = v;
+    }
+    pub fn med_passes(&self) -> i32 {
+        self.data.med_passes
+    }
+    pub fn set_med_passes(&mut self, v: i32) {
+        self.data.med_passes = v;
+    }
+    pub fn auto_bright_thr(&self) -> f32 {
+        self.data.auto_bright_thr
+    }
+    pub fn set_auto_bright_thr(&mut self, v: f32) {
+        self.data.auto_bright_thr = v;
+    }
+    pub fn adjust_maximum_thr(&self) -> f32 {
+        self.data.adjust_maximum_thr
+    }
+    pub fn set_adjust_maximum_thr(&mut self, v: f32) {
+        self.data.adjust_maximum_thr = v;
+    }
+    pub fn no_auto_bright(&self) -> bool {
+        self.data.no_auto_bright != 0
+    }
+    pub fn set_no_auto_bright(&mut self, v: bool) {
+        self.data.no_auto_bright = v as i32;
+    }
+    pub fn use_fuji_rotate(&self) -> bool {
+        self.data.use_fuji_rotate != 0
+    }
+    pub fn set_use_fuji_rotate(&mut self, v: bool) {
+        self.data.use_fuji_rotate = v as i32;
+    }
+    pub fn green_matching(&self) -> bool {
+        self.data.green_matching != 0
+    }
+    pub fn set_green_matching(&mut self, v: bool) {
+        self.data.green_matching = v as i32;
+    }
+    pub fn dcb_iterations(&self) -> i32 {
+        self.data.dcb_iterations
+    }
+    pub fn set_dcb_iterations(&mut self, v: i32) {
+        self.data.dcb_iterations = v;
+    }
+    pub fn dcb_enhance_fl(&self) -> bool {
+        self.data.dcb_enhance_fl != 0
+    }
+    pub fn set_dcb_enhance_fl(&mut self, v: bool) {
+        self.data.dcb_enhance_fl = v as i32;
+    }
+    pub fn fbdd_noiserd(&self) -> i32 {
+        self.data.fbdd_noiserd
+    }
+    pub fn set_fbdd_noiserd(&mut self, v: i32) {
+        self.data.fbdd_noiserd = v;
+    }
+    pub fn exp_correc(&self) -> bool {
+        self.data.exp_correc != 0
+    }
+    pub fn set_exp_correc(&mut self, v: bool) {
+        self.data.exp_correc = v as i32;
+    }
+    pub fn exp_shift(&self) -> f32 {
+        self.data.exp_shift
+    }
+    pub fn set_exp_shift(&mut self, v: f32) {
+        self.data.exp_shift = v;
+    }
+    pub fn exp_preser(&self) -> f32 {
+        self.data.exp_preser
+    }
+    pub fn set_exp_preser(&mut self, v: f32) {
+        self.data.exp_preser = v;
+    }
+    pub fn no_auto_scale(&self) -> bool {
+        self.data.no_auto_scale != 0
+    }
+    pub fn set_no_auto_scale(&mut self, v: bool) {
+        self.data.no_auto_scale = v as i32;
+    }
+    pub fn no_interpolation(&self) -> bool {
+        self.data.no_interpolation != 0
+    }
+    pub fn set_no_interpolation(&mut self, v: bool) {
+        self.data.no_interpolation = v as i32;
     }
 }
 
@@ -992,7 +1225,10 @@ impl<'a> ColorData<'a> {
             None
         } else {
             Some(unsafe {
-                std::slice::from_raw_parts(self.data.profile as *const u8, self.data.profile_length as usize)
+                std::slice::from_raw_parts(
+                    self.data.profile as *const u8,
+                    self.data.profile_length as usize,
+                )
             })
         }
     }
