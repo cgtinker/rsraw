@@ -25,4 +25,4 @@ name = "rsraw_sys"
 
 [build-dependencies]
 cc = { version = "1.2", features = ["parallel"] }
-bindgen = { version = "0.71", default-features = false, features = ["runtime"] }
+bindgen = { version = "0.72", default-features = false, features = ["runtime"] }
