@@ -27,9 +27,13 @@ fn build(out_dir: impl AsRef<Path>) {
     libraw.file("LibRaw/src/decoders/generic.cpp");
     libraw.file("LibRaw/src/decoders/kodak_decoders.cpp");
     libraw.file("LibRaw/src/decoders/load_mfbacks.cpp");
+    libraw.file("LibRaw/src/decoders/olympus14.cpp");
+    libraw.file("LibRaw/src/decoders/pana8.cpp");
     libraw.file("LibRaw/src/decoders/smal.cpp");
+    libraw.file("LibRaw/src/decoders/sonycc.cpp");
     libraw.file("LibRaw/src/decoders/unpack.cpp");
     libraw.file("LibRaw/src/decoders/unpack_thumb.cpp");
+    libraw.file("LibRaw/src/decompressors/losslessjpeg.cpp");
     libraw.file("LibRaw/src/demosaic/aahd_demosaic.cpp");
     libraw.file("LibRaw/src/demosaic/ahd_demosaic.cpp");
     libraw.file("LibRaw/src/demosaic/dcb_demosaic.cpp");
