@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 use std::ffi::CStr;
+use std::marker::PhantomData;
 
 use rsraw_sys as sys;
 use chrono::{DateTime, Local, TimeZone};
@@ -14,14 +15,15 @@ pub type BitDepth = u32;
 pub const BIT_DEPTH_8: BitDepth = 8;
 pub const BIT_DEPTH_16: BitDepth = 16;
 
-pub struct RawImage {
+pub struct RawImage<'buf> {
     raw_data: *mut sys::libraw_data_t,
+    _buf: PhantomData<&'buf [u8]>,
 }
 
 // ============================================================================
 // Top-level accessors - return wrapper structs only
 // ============================================================================
-impl RawImage {
+impl<'buf> RawImage<'buf> {
     fn as_ref(&self) -> &sys::libraw_data_t {
         unsafe { &*self.raw_data }
     }
@@ -30,19 +32,18 @@ impl RawImage {
         unsafe { &mut *self.raw_data }
     }
 
-    pub fn open(buf: &[u8]) -> Result<Self> {
+    pub fn open(buf: &'buf [u8]) -> Result<Self> {
         let raw_data = unsafe { sys::libraw_init(0) };
         Error::check(unsafe {
             sys::libraw_open_buffer(raw_data, buf.as_ptr() as *const _, buf.len())
         })?;
-        Ok(Self { raw_data })
+        Ok(Self { raw_data, _buf: PhantomData })
     }
 
     pub fn unpack(&mut self) -> Result<()> {
         unsafe {
-            let mut raw_params = self.rawparams();
-            raw_params.set_use_rawspeed(true);
-            raw_params.set_max_raw_memory_mb(1024);
+            // TODO: set userawspeed should be an option
+            self.rawparams().set_max_raw_memory_mb(1024);
             Error::check(sys::libraw_unpack(self.raw_data))
         }
     }
@@ -156,19 +157,19 @@ impl RawImage {
     }
 }
 
-impl Drop for RawImage {
+impl Drop for RawImage<'_> {
     fn drop(&mut self) {
         unsafe { sys::libraw_close(self.raw_data) }
     }
 }
 
-impl AsRef<sys::libraw_data_t> for RawImage {
+impl AsRef<sys::libraw_data_t> for RawImage<'_> {
     fn as_ref(&self) -> &sys::libraw_data_t {
         unsafe { &*self.raw_data }
     }
 }
 
-impl AsMut<sys::libraw_data_t> for RawImage {
+impl AsMut<sys::libraw_data_t> for RawImage<'_> {
     fn as_mut(&mut self) -> &mut sys::libraw_data_t {
         unsafe { &mut *self.raw_data }
     }
@@ -1148,7 +1149,7 @@ impl<'a> ColorData<'a> {
         self.data.maximum
     }
 
-    pub fn linear_max(&self) -> &[i64; 4] {
+    pub fn linear_max(&self) -> &[u32; 4] {
         &self.data.linear_max
     }
 
