@@ -1,3 +1,3 @@
 [submodule "rsraw-sys/LibRaw"]
 	path = rsraw-sys/LibRaw
-	url = git@github.com:LibRaw/LibRaw.git
+	url = https://github.com/LibRaw/LibRaw
